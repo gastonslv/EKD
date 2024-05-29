@@ -226,5 +226,6 @@ char handleDeleteButtonPress() {
 		return 'd'; // delete
 	}
 
+
 	return 0;
 }
