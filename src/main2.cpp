@@ -1,87 +1,148 @@
 /*
 #include <Arduino.h>
+#include <string.h>
+#include <LiquidCrystal_I2C.h>
 
-// main keyboard
-#define BTN_1 13   // 1 a b c
-#define BTN_2 2   // 2 d e f
-#define BTN_3 3   // 3 g h i
-#define BTN_4 4   // 4 j k l
-#define BTN_5 5   // 5 m n N
-#define BTN_6 6   // 6 o p q
-#define BTN_7 7   // 7 r s t
-#define BTN_8 8   // 8 u v w
-#define BTN_9 9   // 9 x y z
+// Definición de pines para los botones
+#define BTN_1 13
+#define BTN_2 2
+#define BTN_3 3
+#define BTN_4 4
+#define BTN_5 5
+#define BTN_6 6
+#define BTN_7 7
+#define BTN_8 8
+#define BTN_9 9
+#define BTN_L1 10 // Botón de selección
+#define BTN_L2 11 // Botón de borrado
+#define BTN_SPACE 12
 
-#define BTN_L1 10 // select
+// Variables globales
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+char displayOutput[32];
+int lcd_f = 0;
+int lcd_c = 0;
+int i = 0;
 
+// Configuración inicial
 void setup() {
-	Serial.begin(9600);
-
-    pinMode(BTN_1, INPUT);
-    pinMode(BTN_2, INPUT);
-    pinMode(BTN_3, INPUT);
-    pinMode(BTN_4, INPUT);
-    pinMode(BTN_5, INPUT);
-    pinMode(BTN_6, INPUT);
-    pinMode(BTN_7, INPUT);
-    pinMode(BTN_8, INPUT);
-    pinMode(BTN_9, INPUT);
-    pinMode(BTN_L1, INPUT);
+    Serial.begin(9600);
+    lcd.init();
+    lcd.backlight();
+    lcd.home();
+    for (int pin = 2; pin <= 13; pin++) {
+        pinMode(pin, INPUT);
+    }
 }
 
+// Bucle principal
 void loop() {
+    displayOutput[i] = keyboard();
 
-    while (digitalRead(BTN_L1) == LOW) {
+    switch (displayOutput[i]) {
+        case 'd': // Borrar
+            if (i > 0) {
+                displayOutput[i] = ' ';
+                i--;
+                lcd_c = (lcd_c == 0 && lcd_f == 1) ? 15 : lcd_c - 1;
+                lcd_f = (lcd_c == 15 && lcd_f == 0) ? 1 : lcd_f;
+                lcd.setCursor(lcd_c, lcd_f);
+            }
+            break;
+        case 'r': // Reiniciar
+            lcd.clear();
+            lcd.home();
+            lcd_f = 0;
+            lcd_c = 0;
+            i = 0;
+            memset(displayOutput, ' ', sizeof(displayOutput));
+            break;
+        default:
+            lcd.print(displayOutput[i]);
+            i++;
+            lcd_c++;
+            if (lcd_c == 16) {
+                lcd_f++;
+                lcd_c = 0;
+            }
+            lcd.setCursor(lcd_c, lcd_f);
+            break;
+    }
+}
 
-         if (digitalRead(BTN_1) == HIGH) {
-            Serial.println("BTN 1");
-            while (digitalRead(BTN_1) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_2) == HIGH) {
-            Serial.println("BTN 2");
-            while (digitalRead(BTN_2) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_3) == HIGH) {
-            Serial.println("BTN 3");
-            while (digitalRead(BTN_3) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_4) == HIGH) {
-            Serial.println("BTN 4");
-            while (digitalRead(BTN_4) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_5) == HIGH) {
-            Serial.println("BTN 5");
-            while (digitalRead(BTN_5) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_6) == HIGH) {
-            Serial.println("BTN 6");
-            while (digitalRead(BTN_6) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_7) == HIGH) {
-            Serial.println("BTN 7");
-            while (digitalRead(BTN_7) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_8) == HIGH) {
-            Serial.println("BTN 8");
-            while (digitalRead(BTN_8) == HIGH) {}
-            break;
-        }
-        if (digitalRead(BTN_9) == HIGH) {
-            Serial.println("BTN 9");
-            while (digitalRead(BTN_9) == HIGH) {}
-            delay(50);
-            break;
-        }
+// Función principal del teclado
+char keyboard() {
+    char btn1[] = "1ABC";
+    char btn2[] = "2DEF";
+    char btn3[] = "3GHI";
+    char btn4[] = "4JKL";
+    char btn5[] = "5MNn";
+    char btn6[] = "6OPQ";
+    char btn7[] = "7RST";
+    char btn8[] = "8UVW";
+    char btn9[] = "9XYZ";
+    char btnSpace[] = " ?,";
+
+    while (allButtonsLow()) {
+        lcd.setCursor(lcd_c, lcd_f);
+        lcd.print("_");
     }
 
-    while (digitalRead(BTN_L1) == HIGH) {}
+    lcd.setCursor(lcd_c, lcd_f);
+    lcd.print(' ');
 
+    if (digitalRead(BTN_1) == HIGH) return handleButtonPress(BTN_1, btn1);
+    if (digitalRead(BTN_2) == HIGH) return handleButtonPress(BTN_2, btn2);
+    if (digitalRead(BTN_3) == HIGH) return handleButtonPress(BTN_3, btn3);
+    if (digitalRead(BTN_4) == HIGH) return handleButtonPress(BTN_4, btn4);
+    if (digitalRead(BTN_5) == HIGH) return handleButtonPress(BTN_5, btn5);
+    if (digitalRead(BTN_6) == HIGH) return handleButtonPress(BTN_6, btn6);
+    if (digitalRead(BTN_7) == HIGH) return handleButtonPress(BTN_7, btn7);
+    if (digitalRead(BTN_8) == HIGH) return handleButtonPress(BTN_8, btn8);
+    if (digitalRead(BTN_9) == HIGH) return handleButtonPress(BTN_9, btn9);
+    if (digitalRead(BTN_SPACE) == HIGH) return handleButtonPress(BTN_SPACE, btnSpace);
+    if (digitalRead(BTN_L2) == HIGH) return handleDeleteButtonPress();
+
+    return 0;
 }
+
+// Función para manejar la presión de botones
+char handleButtonPress(int button, char* characters) {
+    int j = 0;
+    while (digitalRead(button) == HIGH) {}
+    delay(DEBOUNCE_DELAY);
+    lcd.blink();
+    while (digitalRead(BTN_L1) == LOW) {
+        lcd.setCursor(lcd_c, lcd_f);
+        lcd.print(characters[j]);
+        if (digitalRead(button) == HIGH) {
+            while (digitalRead(button) == HIGH) {}
+            delay(DEBOUNCE_DELAY);
+            j = (j + 1) % 4;
+        }
+    }
+    lcd.noBlink();
+    while (digitalRead(BTN_L1) == HIGH) {}
+    delay(DEBOUNCE_DELAY);
+    return characters[j];
+}
+
+// Función para manejar la presión del botón de borrado
+char handleDeleteButtonPress() {
+    double timeCounterPressed = 0;
+    while (digitalRead(BTN_L2) == HIGH) {
+        timeCounterPressed += 0.1;
+    }
+    delay(DEBOUNCE_DELAY);
+    return (timeCounterPressed > 10000) ? 'r' : 'd';
+}
+
+// Verifica si todos los botones están en estado bajo
+bool allButtonsLow() {
+    for (int pin = 2; pin <= 13; pin++) {
+        if (digitalRead(pin) == HIGH) return false;
+    }
+    return true;
+}
+
 */
