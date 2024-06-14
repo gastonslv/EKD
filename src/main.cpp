@@ -10,18 +10,18 @@ int lcd_f;
 int lcd_c;
 
 // main keyboard
-#define BTN_1 13   // 1 a b c
-#define BTN_2 2   // 2 d e f
-#define BTN_3 3   // 3 g h i
-#define BTN_4 4   // 4 j k l
-#define BTN_5 5   // 5 m n N
-#define BTN_6 6   // 6 o p q
-#define BTN_7 7   // 7 r s t
-#define BTN_8 8   // 8 u v w
-#define BTN_9 9   // 9 x y z
-#define BTN_L1 10 // select
-#define BTN_L2 11 // delete
-#define BTN_SPACE 12
+#define BTN_1 2   // 1 a b c
+#define BTN_2 3   // 2 d e f
+#define BTN_3 4   // 3 g h i
+#define BTN_4 5   // 4 j k l
+#define BTN_5 6   // 5 m n N
+#define BTN_6 7   // 6 o p q
+#define BTN_7 8   // 7 r s t
+#define BTN_8 9   // 8 u v w
+#define BTN_9 10   // 9 x y z
+#define BTN_L1 11 // select
+#define BTN_L2 12 // delete
+#define BTN_SPACE 13
 char displayOutput[32];
 int i;
 
