@@ -95,7 +95,12 @@ void loop() {
 			memset(displayOutput, ' ', sizeof(displayOutput));
 			break;
 		default:
-			lcd.print(displayOutput[i]);
+
+			if (displayOutput[i] == 'n') {
+				lcd.print((char) 0xEE);
+			} else {
+				lcd.print(displayOutput[i]);
+			}
 
 			i++;
 			lcd_c++;
@@ -174,7 +179,14 @@ char handleButtonPress(int button, char* characters) {
 
 	while (digitalRead(BTN_L1) == LOW) {
 		lcd.setCursor(lcd_c, lcd_f);
-		lcd.print(characters[j]);
+
+		if (characters[j] == 'n') {
+			lcd.print((char) 0xEE);
+		
+		} else {
+			lcd.print(characters[j]);
+		}
+
 		if (digitalRead(button) == HIGH) {
 
 			while (digitalRead(button) == HIGH) {}
