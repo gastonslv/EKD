@@ -19,25 +19,11 @@ int lcd_c;
 #define BTN_7 8   // 7 r s t
 #define BTN_8 9   // 8 u v w
 #define BTN_9 10   // 9 x y z
-#define BTN_L1 11 // select
-#define BTN_L2 12 // delete
-#define BTN_SPACE 13
+#define BTN_L1 13 // select
+#define BTN_L2 11 // delete
+#define BTN_SPACE 12
 char displayOutput[32];
 int i;
-
-// shortcut buttons
-#define A1
-char a1[20];
-#define A2
-char a2[20];
-#define A3
-char a3[20];
-#define A4
-char a4[20];
-#define A5
-char a5[20];
-#define A6
-char a6[20];
 
 #define DEBOUNCE_DELAY 50
 
@@ -85,8 +71,6 @@ void loop() {
 			}
 
 			displayOutput[i] = ' ';
-
-			
 
 			i--;
 			
@@ -161,7 +145,7 @@ char keyboard() {
 	lcd.setCursor(lcd_c, lcd_f);
 	lcd.print(' ');
 
-	if (i == 3) {
+	if (i == 31) {
 		while (digitalRead(BTN_L2) == LOW) {} // limit of the
 	}
 
