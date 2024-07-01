@@ -145,7 +145,7 @@ char keyboard() {
 	lcd.print(' ');
 
 	if (i >= 31) {
-		while (digitalRead(BTN_L2) == LOW) {} // limit of the
+		while (digitalRead(BTN_L2) == LOW) {} // limit of the lcd
 	}
 
     if (digitalRead(BTN_1) == HIGH) return handleButtonPress(BTN_1, btn1);
