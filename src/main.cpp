@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include <string.h>
-#include "./functions/main_keyboard.h"
-#include "../lib/LiquidCrystal/src/LiquidCrystal.h"
 #include "../lib/LiquidCrystal_I2C-1.1.2/LiquidCrystal_I2C.h"
 
 // lcd
@@ -27,7 +25,7 @@ int i;
 
 #define DEBOUNCE_DELAY 50
 
-// function
+// functions
 char keyboard();
 char handleButtonPress(int button, char* characters);
 char handleDeleteButtonPress();
@@ -52,7 +50,6 @@ void setup() {
     pinMode(BTN_L2, INPUT);
     pinMode(BTN_SPACE, INPUT);
 
-
 	lcd_f = 0;
 	lcd_c = 0;
 	i = 0;
@@ -62,10 +59,9 @@ void loop() {
 
 	displayOutput[i] = keyboard();
 
-	switch (displayOutput[i]){
+	switch (displayOutput[i]) {
 		
 		case 'd':
-
 			if (i == 0){
 				break;
 			}
@@ -73,7 +69,7 @@ void loop() {
 			displayOutput[i] = ' ';
 
 			i--;
-			
+
 			if (lcd_c == 0 && lcd_f == 1) {
 				lcd_c = 15;
 				lcd_f = 0;
@@ -85,8 +81,8 @@ void loop() {
 			lcd.setCursor(lcd_c, lcd_f);
 
 			break;
-		case 'r':
 	
+		case 'r':
 			lcd.clear();
 			lcd.home();
 			lcd_f = 0;
@@ -94,8 +90,8 @@ void loop() {
 			i = 0;
 			memset(displayOutput, ' ', sizeof(displayOutput));
 			break;
-		default:
 
+		default:
 			if (displayOutput[i] == 'n') {
 				lcd.print((char) 0xEE);
 			} else {
@@ -111,22 +107,22 @@ void loop() {
 			}
 
 			lcd.setCursor(lcd_c, lcd_f);
-			
+
 			break;
 	}
 }
 
 char keyboard() {
-    char btn1[] = "1ABC";
-    char btn2[] = "2DEF";
-    char btn3[] = "3GHI";
-    char btn4[] = "4JKL";
-    char btn5[] = "5MNn";
-    char btn6[] = "6OPQ";
-    char btn7[] = "7RST";
-    char btn8[] = "8UVW";
-    char btn9[] = "9XYZ";
-    char btn10[] = " ?,.";
+    char btn1[] = "ABC1";
+    char btn2[] = "DEF2";
+    char btn3[] = "GHI3";
+    char btn4[] = "JKL4";
+    char btn5[] = "MNn5";
+    char btn6[] = "OPQ6";
+    char btn7[] = "RST7";
+    char btn8[] = "UVW8";
+    char btn9[] = "XYZ9";
+    char btn10[] = " ?.,";
 
 	lcd.setCursor(lcd_c, lcd_f);
 	lcd.print("_");
@@ -143,14 +139,12 @@ char keyboard() {
 		digitalRead(BTN_9) == LOW &&
 		digitalRead(BTN_L2) == LOW &&
 		digitalRead(BTN_SPACE) == LOW
-	){
-		
-	}
+	){}
 
 	lcd.setCursor(lcd_c, lcd_f);
 	lcd.print(' ');
 
-	if (i == 31) {
+	if (i >= 31) {
 		while (digitalRead(BTN_L2) == LOW) {} // limit of the
 	}
 
@@ -177,7 +171,20 @@ char handleButtonPress(int button, char* characters) {
 
 	lcd.blink();
 
-	while (digitalRead(BTN_L1) == LOW) {
+	while (
+        digitalRead(BTN_1) == LOW &&
+		digitalRead(BTN_2) == LOW &&
+		digitalRead(BTN_3) == LOW &&
+		digitalRead(BTN_4) == LOW &&
+		digitalRead(BTN_5) == LOW &&
+		digitalRead(BTN_6) == LOW &&
+		digitalRead(BTN_7) == LOW &&
+		digitalRead(BTN_8) == LOW &&
+		digitalRead(BTN_9) == LOW &&
+		digitalRead(BTN_L1) == LOW &&
+		digitalRead(BTN_L2) == LOW &&
+		digitalRead(BTN_SPACE) == LOW
+    ) {
 		lcd.setCursor(lcd_c, lcd_f);
 
 		if (characters[j] == 'n') {
@@ -207,7 +214,6 @@ char handleButtonPress(int button, char* characters) {
 }
 
 char handleDeleteButtonPress() {
-
 	double timeCounterPressed = 0;
 
 	while (digitalRead(BTN_L2) == HIGH) {
@@ -221,7 +227,6 @@ char handleDeleteButtonPress() {
 	else {
 		return 'd'; // delete
 	}
-
 
 	return 0;
 }
